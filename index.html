@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MadMac Clicker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle, #1a0000, #000000);
+      color: white;
+      overflow-x: hidden;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding-top: 40px;
+    }
+    h1 {
+      color: #ff4d4d;
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+    #clicker {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #ff1a1a;
+      box-shadow: 0 0 20px #ff1a1a88;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-bottom: 15px;
+    }
+    #clicker:active {
+      transform: scale(0.92);
+    }
+    #score {
+      font-size: 48px;
+      margin-bottom: 40px;
+      color: #ff4d4d;
+    }
+    #upgrades {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 90%;
+      max-width: 900px;
+      margin-top: 20px;
+    }
+    .upgrade {
+      background: #330000;
+      border: 2px solid #ff1a1a;
+      border-radius: 15px;
+      padding: 20px;
+      font-size: 18px;
+      transition: 0.3s;
+      box-shadow: 0 0 10px #ff1a1a55;
+      cursor: pointer;
+    }
+    .upgrade:hover {
+      background: #660000;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #ff1a1a;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #ff1a1a;
+      border: none;
+      color: white;
+      font-size: 18px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      box-shadow: 0 0 10px #ff4d4d;
+    }
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particleMove 0.7s forwards;
+    }
+    @keyframes particleMove {
+      from { opacity: 1; }
+      to { transform: translate(var(--x), var(--y)) scale(0.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>MadMac Clicker</h1>
+<img id="clicker" src="ct madmac.jpg" alt="Click Me">
+<div id="score">0</div>
+<button onclick="toggleMusic()">🎵 Toggle Music</button>
+<div id="upgrades"></div>
+
+<audio id="music" src="music.mp3" loop></audio>
+<audio id="click-sound" src="click.mp3"></audio>
+<audio id="upgrade-sound" src="upgrade.mp3"></audio>
+
+<script>
+let score = 0;
+let clickPower = 1;
+const music = document.getElementById('music');
+const clickSound = document.getElementById('click-sound');
+const upgradeSound = document.getElementById('upgrade-sound');
+
+const upgrades = [
+  { name: "Broken Mouse", cost: 3200, power: 50 },
+  { name: "Extra Finger", cost: 200, power: 1 },
+  { name: "Energy Drink", cost: 250, power: 2 },
+  { name: "Gaming Chair", cost: 500, power: 5 },
+  { name: "Turbo Gloves", cost: 1200, power: 10 },
+  { name: "Pro Gamer Setup", cost: 3000, power: 20 },
+  { name: "Madman's Focus", cost: 7000, power: 40 },
+  { name: "Quantum Clicker", cost: 15000, power: 80 },
+  { name: "AI Assistant", cost: 35000, power: 200 }
+];
+
+document.getElementById('clicker').onclick = () => {
+  let crit = Math.random() < 0.1;
+  let gain = clickPower * (crit ? 5 : 1);
+  score += gain;
+  clickSound.play();
+  createParticles();
+  updateUI();
+};
+
+function toggleMusic() {
+  if (music.paused) music.play();
+  else music.pause();
+}
+
+function createParticles() {
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = (window.innerWidth/2) + 'px';
+    p.style.top = (window.innerHeight/2) + 'px';
+    p.style.setProperty('--x', `${Math.random() * 200 - 100}px`);
+    p.style.setProperty('--y', `${Math.random() * 200 - 100}px`);
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 700);
+  }
+}
+
+function updateUI() {
+  document.getElementById('score').innerText = Math.floor(score);
+}
+
+function renderUpgrades() {
+  const upgContainer = document.getElementById('upgrades');
+  upgContainer.innerHTML = '';
+  upgrades.forEach((u, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'upgrade';
+    btn.innerHTML = `<b>${u.name}</b><br>Cost: ${u.cost}`;
+    btn.onclick = () => {
+      if (score >= u.cost) {
+        score -= u.cost;
+        clickPower += u.power;
+        u.cost = Math.floor(u.cost * 2.2);
+        upgradeSound.play();
+        renderUpgrades();
+      }
+    };
+    upgContainer.appendChild(btn);
+  });
+}
+
+renderUpgrades();
+setInterval(updateUI, 100);
+</script>
+
+</body>
+</html>
