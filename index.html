@@ -7,8 +7,9 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       height: 100%;
+      width: 100%;
       font-family: 'Poppins', sans-serif;
-      background: radial-gradient(circle, #1a0000, #000000);
+      background: radial-gradient(circle, #330000, #000000);
       color: white;
       overflow-x: hidden;
       text-align: center;
@@ -114,22 +115,22 @@ const clickSound = document.getElementById('click-sound');
 const upgradeSound = document.getElementById('upgrade-sound');
 
 const upgrades = [
-  { name: "Broken Mouse", cost: 3200, power: 50 },
-  { name: "Extra Finger", cost: 200, power: 1 },
-  { name: "Energy Drink", cost: 250, power: 2 },
-  { name: "Gaming Chair", cost: 500, power: 5 },
-  { name: "Turbo Gloves", cost: 1200, power: 10 },
-  { name: "Pro Gamer Setup", cost: 3000, power: 20 },
-  { name: "Madman's Focus", cost: 7000, power: 40 },
-  { name: "Quantum Clicker", cost: 15000, power: 80 },
-  { name: "AI Assistant", cost: 35000, power: 200 }
+  { name: "MadMac Gloves", cost: 50, power: 1 },
+  { name: "VRFS Helmet", cost: 100, power: 2 },
+  { name: "MadMac Shoes", cost: 250, power: 5 },
+  { name: "VRFS Pro Gloves", cost: 500, power: 10 },
+  { name: "MadMac Elite Boosters", cost: 1200, power: 20 },
+  { name: "VRFS Master Core", cost: 4000, power: 50 },
+  { name: "MadMac Legend Set", cost: 10000, power: 100 },
+  { name: "VRFS Infinity Pack", cost: 25000, power: 250 }
 ];
 
 document.getElementById('clicker').onclick = () => {
   let crit = Math.random() < 0.1;
   let gain = clickPower * (crit ? 5 : 1);
   score += gain;
-  clickSound.play();
+  const clickClone = clickSound.cloneNode();
+  clickClone.play();
   createParticles();
   updateUI();
 };
@@ -168,7 +169,8 @@ function renderUpgrades() {
         score -= u.cost;
         clickPower += u.power;
         u.cost = Math.floor(u.cost * 2.2);
-        upgradeSound.play();
+        const upgradeClone = upgradeSound.cloneNode();
+        upgradeClone.play();
         renderUpgrades();
       }
     };
